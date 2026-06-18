@@ -1,4 +1,5 @@
 import {knex as setupKnex, Knex} from 'knex'
+import { env } from './env'
 
 //Configuração do banco de dados, salva em um arquivo sqlite na pasta tmp
 
@@ -9,14 +10,10 @@ import {knex as setupKnex, Knex} from 'knex'
 //npm i knex sqlite3
 
 
-if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL não está definida')
-}
-
 export const config: Knex.Config = {
     client: 'sqlite',
     connection: {
-        filename: process.env.DATABASE_URL
+        filename: env.DATABASE_URL
     },
     useNullAsDefault: true, // Para não precisar definir valores nulos para cada campo
     migrations: {
