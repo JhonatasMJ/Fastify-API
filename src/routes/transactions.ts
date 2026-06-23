@@ -8,6 +8,14 @@ import {
 } from "../schemas/transactionsSchemas";
 
 export async function transactionsRoutes(app: FastifyInstance) {
+  //resumo das transações, soma todas as transações de credito e retorna o total, as: "amount" é o nome da coluna que será retornada, nao precisa ser o mesmo nome da coluna do banco de dados.
+  app.get("/summary", async () => {
+    const summary = await knex("transactions")
+      .sum("amount", { as: "amount" })
+      .first();
+    return { summary };
+  });
+
   //listar todas as transações
   app.get("/", async () => {
     const transactions = await knex("transactions").select();
