@@ -1,17 +1,13 @@
 import fastify from "fastify";
-import { knex } from "./database";
-import crypto from 'node:crypto';
+
 import { env } from "./env";
+import { transactionsRoutes } from "./routes/transactions";
 
 const app = fastify();
 
-app.get('/hello', async (req, res) => {
-    const transaction = await knex('transactions').insert({
-        id: crypto.randomUUID(),
-        title: 'Transação de teste',
-        amount: 1000,
-    }).returning('*');
-    return transaction;
+//Registra as rotas na aplicação, prefix é o prefixo da rota, no caso transactions
+app.register(transactionsRoutes,{
+    prefix: 'transactions',
 });
 
 

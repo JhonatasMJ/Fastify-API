@@ -4,7 +4,7 @@ import { z } from "zod";
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("production"),
   DATABASE_URL: z.string(),
-  PORT: z.number().default(3000),
+  PORT: z.coerce.number().default(3333),
 });
 
 //parse: transforma o process.env em um objeto
