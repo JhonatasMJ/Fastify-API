@@ -1,8 +1,15 @@
-import { test, beforeAll, afterAll, describe, expect, beforeEach } from "vitest";
+import {
+  test,
+  beforeAll,
+  afterAll,
+  describe,
+  expect,
+  beforeEach,
+} from "vitest";
 import request from "supertest";
 import { app } from "../app";
 import knex from "knex";
-import { execSync } from 'node:child_process';
+import { execSync } from "node:child_process";
 
 //Teste unitarios = testes que testam uma unidade de codigo, uma funcao, uma classe, etc.
 
@@ -32,7 +39,6 @@ describe("Transactions routes", () => {
   afterAll(async () => {
     await app.close();
   });
-
 
   //Antes de cada teste, vamos rodar as migrations, desfazer todas as migrations e rodar todas as migrations novamente, apagar o banco de dados e criar novamente
   beforeEach(async () => {
@@ -68,12 +74,76 @@ describe("Transactions routes", () => {
       .set("Cookie", cookies!)
       .expect(200);
 
-      //Verificar se a resposta contém o titulo e o amount da transação criada
-      expect(listTransactionsResponse.body.transactions).toEqual([
-        expect.objectContaining({
-            title: "New transaction",
-            amount: 5000,
-        })
-      ])
+    //Verificar se a resposta contém o titulo e o amount da transação criada
+    expect(listTransactionsResponse.body.transactions).toEqual([
+      expect.objectContaining({
+        title: "New transaction",
+        amount: 5000,
+      }),
+    ]);
+  });
+
+  //Teste Listar uma transação específica
+  test("List specific transaction", async () => {
+    const createTransactionResponse = await request(app.server)
+      .post("/transactions")
+      .send({
+        title: "New transaction",
+        amount: 5000,
+        type: "credit",
+      });
+
+    const cookies = createTransactionResponse.get("Set-Cookie");
+    const listTransactionsResponse = await request(app.server)
+      .get("/transactions")
+      .set("Cookie", cookies!)
+      .expect(200);
+
+    const transactionId = listTransactionsResponse.body.transactions[0].id;
+
+    //Verificar se a resposta contém o titulo e o amount da transação criada, pegando o id da transação criada na lista de transações
+    const getTransactionResponse = await request(app.server)
+      .get(`/transactions/${transactionId}`)
+      .set("Cookie", cookies!)
+      .expect(200);
+
+    expect(getTransactionResponse.body.transaction).toEqual(
+      expect.objectContaining({
+        title: "New transaction",
+        amount: 5000,
+      }),
+    );
+  });
+
+  //Teste Listar um resumo das transações
+  test("List summary of transactions", async () => {
+    const createTransactionResponse = await request(app.server)
+      .post("/transactions")
+      .send({
+        title: "Credit transaction",
+        amount: 5000,
+        type: "credit",
+      });
+
+    const cookies = createTransactionResponse.get("Set-Cookie");
+
+    await request(app.server)
+      .post("/transactions")
+      .set("Cookie", cookies!)
+      .send({
+        title: "Debit transaction",
+        amount: 2000,
+        type: "debit",
+      });
+
+    const summaryResponse = await request(app.server)
+      .get("/transactions/summary")
+      .set("Cookie", cookies!)
+      .expect(200);
+
+    //Verificar se a resposta contém o titulo e o amount da transação criada
+    expect(summaryResponse.body.summary).toEqual({
+      amount: 3000,
+    });
   });
 });
