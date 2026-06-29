@@ -8,7 +8,7 @@ import {
 import { checkSessionIdExist } from "../middlewares/check-session-id-exist";
 
 export async function transactionsRoutes(app: FastifyInstance) {
-  //resumo das transações, soma todas as transações de credito e retorna o total, as: "amount" é o nome da coluna que será retornada, nao precisa ser o mesmo nome da coluna do banco de dados.
+  //resumo das transações, soma todas as transações de credito e retorna o total, as: "amount" é o nome da coluna que será retornada, nao precisa ser o mesmo nome da coluna do banco de dados. PreHandler é um middleware que será executado antes da rota, no caso, verificar se a sessionId existe. Hooks sao funções que sao executadas antes ou depois de uma rota.
   app.get(
     "/summary",
     {
