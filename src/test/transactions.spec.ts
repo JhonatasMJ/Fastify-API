@@ -1,6 +1,8 @@
-import { test, beforeAll, afterAll, describe, expect } from "vitest";
+import { test, beforeAll, afterAll, describe, expect, beforeEach } from "vitest";
 import request from "supertest";
 import { app } from "../app";
+import knex from "knex";
+import { execSync } from 'node:child_process';
 
 //Teste unitarios = testes que testam uma unidade de codigo, uma funcao, uma classe, etc.
 
@@ -29,6 +31,13 @@ describe("Transactions routes", () => {
   //Depois de todos os testes, vamos fechar a aplicação
   afterAll(async () => {
     await app.close();
+  });
+
+
+  //Antes de cada teste, vamos rodar as migrations, desfazer todas as migrations e rodar todas as migrations novamente, apagar o banco de dados e criar novamente
+  beforeEach(async () => {
+    execSync("npm run knex -- migrate:rollback --all");
+    execSync("npm run knex -- migrate:latest");
   });
 
   //Teste Criar uma nova transação

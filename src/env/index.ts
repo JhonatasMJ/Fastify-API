@@ -1,5 +1,17 @@
-import "dotenv/config";
+import {config} from "dotenv";
 import { z } from "zod";
+
+//Verifica se o NODE_ENV é test, se for, carrega o arquivo .env.test, se não, carrega o arquivo .env
+if(process.env.NODE_ENV === "test") {
+  config({
+    path: ".env.test",
+  });
+} else {
+  config({
+    path: ".env",
+  });
+}
+
 
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("production"),
