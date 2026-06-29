@@ -1,6 +1,6 @@
-import { test, beforeAll, afterAll } from 'vitest';
-import request from 'supertest';
-import { app } from '../app';
+import { test, beforeAll, afterAll, describe } from "vitest";
+import request from "supertest";
+import { app } from "../app";
 
 //Teste unitarios = testes que testam uma unidade de codigo, uma funcao, uma classe, etc.
 
@@ -19,20 +19,27 @@ import { app } from '../app';
 //npm i -D supertest
 //npm i -D @types/supertest
 
-//Antes de todos os testes, vamos criar uma sessão, aguardar a aplicação estar pronta
-beforeAll(async () => {
+
+//Descrição do teste, grupo de testes
+describe("Transactions routes", () => {
+  //Antes de todos os testes, vamos criar uma sessão, aguardar a aplicação estar pronta
+  beforeAll(async () => {
     await app.ready();
-})
+  });
 
-//Depois de todos os testes, vamos fechar a aplicação
-afterAll(async () => {
+  //Depois de todos os testes, vamos fechar a aplicação
+  afterAll(async () => {
     await app.close();
-})
+  });
 
-test('Create a new transaction',  async () => {
-    await request(app.server).post('/transactions').send({
-        title: 'New transaction',
+  test("Create a new transaction", async () => {
+    await request(app.server)
+      .post("/transactions")
+      .send({
+        title: "New transaction",
         amount: 5000,
-        type: 'credit',
-    }).expect(201);
+        type: "credit",
+      })
+      .expect(201);
+  });
 });
