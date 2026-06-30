@@ -4,9 +4,13 @@
     "dotenv": "^17.4.2",
     "fastify": "^5.8.5",
     "knex": "^3.2.10",
+    "pg": "^8.22.0",
     "sqlite3": "^6.0.1",
     "typescript": "^6.0.3",
     "zod": "^4.4.3"
+  },
+  "engines": {
+    "node": ">=22.13.0"
   },
   "devDependencies": {
     "@rocketseat/eslint-config": "^2.2.2",
@@ -23,6 +27,6 @@
     "knex": "tsx ./node_modules/knex/bin/cli.js",
     "lint": "eslint src --ext .ts --fix",
     "test": "vitest",
-    "build":  "tsup src"
+    "build": "tsup src"
   }
 }
